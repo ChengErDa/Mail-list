@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<link rel="stylesheet" href="css/ui-base.css" />
+		<link rel="stylesheet" href="css/ui-box.css" />
+		<link rel="stylesheet" href="css/ui-color.css" />
+	</head>
+	<body>
+		 <div id="search" class="ub ub-f1">
+			<div class="sc-bg-active uinput ub ub-f1  bc-border uba" style="background: #FFF;margin:.5em;border: none;">
+				<div class="uinn fa fa-search sc-text"></div>
+				<form action="javascript:;" class="ub ub-f1">
+					<input id="search_inpt" placeholder="请输入机场三字码/四字码/中文" type="search" onchange="checkKey(event)">
+				</form>
+			</div>
+		</div>
+
+		<div class="ub ub-ver">
+			<div id="history" style="margin:0 2em 0 .5em;">
+				<div class="ub" style="padding: .8em 0 .2em 0;">历史搜索</div>
+				<div class="history">
+					<ul>
+					</ul>
+					<div style="clear: both;"></div>
+				</div>
+			</div>
+			<div id="datalist" class="ub ub-ver" style="background: #FFF;">
+
+			</div>
+		</div>
+
+		<div id="sort" class="ub ub-ver" style="position: fixed;right:0;top:0;color:#d20a23;">
+		</div>
+	</body>
+	<script src="js/pinyin_dict_notone.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/pinyin_dict_withtone.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="js/pinyinUtil.js" ></script>
+	<script src="js/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+	
+	
+		
+		/**
+		 *业务逻辑初始化 
+		 */
+		function init() {
+			var dataList = [{"airport_4code":"ZLXY","airport_3code":"XIY","city_ch_name":"西安","city_en_name":"XI'AN","rownum_":1},{"airport_4code":"ZUCK","airport_3code":"CKG","city_ch_name":"重庆","city_en_name":"CHONGQING","rownum_":2},{"airport_4code":"ZBDT","airport_3code":"DAT","city_ch_name":"大同","city_en_name":"DATONG","rownum_":3},{"airport_4code":"ZBAA","airport_3code":"PEK","city_ch_name":"北京","city_en_name":"BEIJING","rownum_":4},{"airport_4code":"RCYU","airport_3code":"HUN","city_ch_name":"花莲","city_en_name":"HUALIEN","rownum_":5},{"airport_4code":"ZBES","airport_3code":"YIE","city_ch_name":"阿尔山","city_en_name":"AERSHAN","rownum_":6},{"airport_4code":"RCSS","airport_3code":"TSA","city_ch_name":"台北","city_en_name":"TAIPEI","rownum_":7},{"airport_4code":"RCTP","airport_3code":"TPE","city_ch_name":"台北","city_en_name":"TAIPEI","rownum_":8},{"airport_4code":"RJTT","airport_3code":"HND","city_ch_name":"东京","city_en_name":"TOKYO","rownum_":9},{"airport_4code":"RJOO","airport_3code":"ITM","city_ch_name":"大阪","city_en_name":"OSAKA","rownum_":10},{"airport_4code":"RJCH","airport_3code":"HKD","city_ch_name":"涵馆","city_en_name":"HAKODATE","rownum_":11},{"airport_4code":"RJSS","airport_3code":"SDJ","city_ch_name":"仙台","city_en_name":"SENDAI","rownum_":12},{"airport_4code":"RJSN","airport_3code":"KIJ","city_ch_name":"新泻","city_en_name":"NIIGATA","rownum_":13},{"airport_4code":"RJFT","airport_3code":"KMJ","city_ch_name":"熊本","city_en_name":"KUMAMOTO","rownum_":14},{"airport_4code":"ZBER","airport_3code":"ERL","city_ch_name":"二连浩特","city_en_name":"ERLIANHAOTE","rownum_":15},{"airport_4code":"ZUJZ","airport_3code":"JZH","city_ch_name":"九寨沟","city_en_name":"jiuzhaigou","rownum_":16},{"airport_4code":"ZHHH","airport_3code":"WUH","city_ch_name":"武汉","city_en_name":"WUHAN","rownum_":17},{"airport_4code":"ZGOW","airport_3code":"SWA","city_ch_name":"揭阳","city_en_name":"JIEYANG","rownum_":18},{"airport_4code":"ZHXF","airport_3code":"XFN","city_ch_name":"襄阳","city_en_name":"XIANGYANG","rownum_":19},{"airport_4code":"ZSCN","airport_3code":"KHN","city_ch_name":"南昌","city_en_name":"NANCHANG","rownum_":20},{"airport_4code":"ZUYB","airport_3code":"YBP","city_ch_name":"宜宾","city_en_name":"YIBIN","rownum_":21},{"airport_4code":"ZBTJ","airport_3code":"TSN","city_ch_name":"天津","city_en_name":"TIANJIN","rownum_":22},{"airport_4code":"ZSPD","airport_3code":"PVG","city_ch_name":"浦东","city_en_name":"SHANGHAI","rownum_":23},{"airport_4code":"ZLXN","airport_3code":"XNN","city_ch_name":"西宁","city_en_name":"XINING","rownum_":24},{"airport_4code":"ZPDL","airport_3code":"DLU","city_ch_name":"大理","city_en_name":"DALI","rownum_":25},{"airport_4code":"ZSGZ","airport_3code":"KOW","city_ch_name":"赣州","city_en_name":"GANZHOU","rownum_":26},{"airport_4code":"ZSJD","airport_3code":"JDZ","city_ch_name":"景德镇","city_en_name":"JINGDEZHEN","rownum_":27},{"airport_4code":"ZYQQ","airport_3code":"NDG","city_ch_name":"齐齐哈尔","city_en_name":"QIQIHAR","rownum_":28},{"airport_4code":"ZPJH","airport_3code":"JHG","city_ch_name":"西双版纳","city_en_name":"XISHUANGBANNA","rownum_":29},{"airport_4code":"VVTS","airport_3code":"SGN","city_ch_name":"胡志明","city_en_name":"HOCHIMINH","rownum_":30},{"airport_4code":"ZSJJ","airport_3code":"JIU","city_ch_name":"九江","city_en_name":"JIUJIANG","rownum_":31},{"airport_4code":"ZSAM","airport_3code":"XMN","city_ch_name":"厦门","city_en_name":"XIAMEN","rownum_":32},{"airport_4code":"ZBUL","airport_3code":"HLH","city_ch_name":"乌兰浩特","city_en_name":"WULANHAOTE","rownum_":33},{"airport_4code":"ZLJQ","airport_3code":"JGN","city_ch_name":"嘉峪关","city_en_name":"JIAYUGUAN","rownum_":34},{"airport_4code":"ZWAK","airport_3code":"AKU","city_ch_name":"阿克苏","city_en_name":"AKESU","rownum_":35},{"airport_4code":"ZWKC","airport_3code":"KCA","city_ch_name":"库车","city_en_name":"KUCHE","rownum_":36},{"airport_4code":"ZYHE","airport_3code":"HEK","city_ch_name":"黑河","city_en_name":"HEIHE","rownum_":37},{"airport_4code":"ZWKM","airport_3code":"KRY","city_ch_name":"克拉玛依","city_en_name":"KELAMAYI","rownum_":38},{"airport_4code":"ZWAT","airport_3code":"AAT","city_ch_name":"阿勒泰","city_en_name":"ALETAI","rownum_":39},{"airport_4code":"ZYCH","airport_3code":"CNI","city_ch_name":"长海","city_en_name":"CHANGHAI","rownum_":40},{"airport_4code":"ZGMX","airport_3code":"MXZ","city_ch_name":"梅县","city_en_name":"MEIXIAN","rownum_":41},{"airport_4code":"ZSYT","airport_3code":"YNT","city_ch_name":"烟台","city_en_name":"YANTAI","rownum_":42},{"airport_4code":"ZHLY","airport_3code":"LYA","city_ch_name":"洛阳","city_en_name":"LUOYANG","rownum_":43},{"airport_4code":"ZPPP","airport_3code":"KMG","city_ch_name":"昆明","city_en_name":"KUNMING","rownum_":44},{"airport_4code":"ZGHA","airport_3code":"HHA","city_ch_name":"长沙","city_en_name":"CHANGSHA","rownum_":45},{"airport_4code":"ZPDQ","airport_3code":"DIG","city_ch_name":"迪庆","city_en_name":"DIQING","rownum_":46},{"airport_4code":"ZSWF","airport_3code":"WEF","city_ch_name":"潍坊","city_en_name":"WEIFANG","rownum_":47},{"airport_4code":"ZYJM","airport_3code":"JMU","city_ch_name":"佳木斯","city_en_name":"JIAMUSI","rownum_":48},{"airport_4code":"ZJHK","airport_3code":"HAK","city_ch_name":"海口","city_en_name":"HAIKOU","rownum_":49},{"airport_4code":"ZYCY","airport_3code":"CHG","city_ch_name":"朝阳","city_en_name":"CHAOYANG","rownum_":50},{"airport_4code":"ZPLC","airport_3code":"LNJ","city_ch_name":"临沧","city_en_name":"LINCANG","rownum_":51},{"airport_4code":"ZGBS","airport_3code":"AEB","city_ch_name":"百色","city_en_name":"BAISE","rownum_":52},{"airport_4code":"UHWW","airport_3code":"VVO","city_ch_name":"符拉迪沃斯托克","city_en_name":"VLADIVOSTOK","rownum_":53},{"airport_4code":"ZGGG","airport_3code":"CAN","city_ch_name":"广州","city_en_name":"GUANGZHOU","rownum_":54},{"airport_4code":"ZSWX","airport_3code":"WUX","city_ch_name":"无锡","city_en_name":"WUXI","rownum_":55},{"airport_4code":"ZWTN","airport_3code":"HTN","city_ch_name":"和田","city_en_name":"HOTAN","rownum_":56},{"airport_4code":"ZUMY","airport_3code":"MIG","city_ch_name":"绵阳","city_en_name":"MIANYANG","rownum_":57},{"airport_4code":"VTCC","airport_3code":"CNX","city_ch_name":"清迈","city_en_name":"CHIANGMAI","rownum_":58},{"airport_4code":"VYTO","airport_3code":"VYT","city_ch_name":"东吁","city_en_name":"TAUNGOO","rownum_":59},{"airport_4code":"VYNT","airport_3code":"VYN","city_ch_name":"南渡","city_en_name":"NAMTU","rownum_":60},{"airport_4code":"RJFU","airport_3code":"NGS","city_ch_name":"长崎","city_en_name":"NAGASAKI","rownum_":61},{"airport_4code":"RJFK","airport_3code":"KOJ","city_ch_name":"鹿儿岛","city_en_name":"KAGOSHIMA","rownum_":62},{"airport_4code":"ZLTS","airport_3code":"THQ","city_ch_name":"天水","city_en_name":"TIANSHUI","rownum_":63},{"airport_4code":"RJCC","airport_3code":"CTS","city_ch_name":"北海道","city_en_name":"SAPPORO","rownum_":64},{"airport_4code":"VYMD","airport_3code":"MDL","city_ch_name":"曼德勒","city_en_name":"MANDALAY","rownum_":65},{"airport_4code":"ZBYN","airport_3code":"TYN","city_ch_name":"太原","city_en_name":"TAIYUAN","rownum_":66},{"airport_4code":"ZGNN","airport_3code":"NNG","city_ch_name":"南宁","city_en_name":"NANNING","rownum_":67},{"airport_4code":"ZSFZ","airport_3code":"FOC","city_ch_name":"福州","city_en_name":"FUZHOU","rownum_":68},{"airport_4code":"ZLDH","airport_3code":"DNH","city_ch_name":"敦煌","city_en_name":"DUNHUANG","rownum_":69},{"airport_4code":"ZLAK","airport_3code":"AKA","city_ch_name":"安康","city_en_name":"ANKANG/WULIPU","rownum_":70},{"airport_4code":"ZWKL","airport_3code":"KRL","city_ch_name":"库尔勒","city_en_name":"KORLA","rownum_":71},{"airport_4code":"ZWCM","airport_3code":"IQM","city_ch_name":"且末","city_en_name":"QIEMO","rownum_":72},{"airport_4code":"ZBSJ","airport_3code":"SJW","city_ch_name":"石家庄","city_en_name":"SHIJIAZHUANG","rownum_":73},{"airport_4code":"WMKK","airport_3code":"KUL","city_ch_name":"吉隆坡","city_en_name":"KUALA LUMPUR","rownum_":74},{"airport_4code":"ZGHY","airport_3code":"HNY","city_ch_name":"衡阳","city_en_name":"HENGYANG","rownum_":75},{"airport_4code":"ZLLL","airport_3code":"ZGC","city_ch_name":"兰州","city_en_name":"LANZHOU","rownum_":76},{"airport_4code":"ZSLG","airport_3code":"LYG","city_ch_name":"连云港","city_en_name":"LIANYUNGANG/BAITAF","rownum_":77},{"airport_4code":"ZYHB","airport_3code":"HRB","city_ch_name":"哈尔滨","city_en_name":"HARBIN","rownum_":78},{"airport_4code":"ZLYA","airport_3code":"ENY","city_ch_name":"延安","city_en_name":"YANAN/ERSHILIPU","rownum_":79},{"airport_4code":"ZHSS","airport_3code":"SHS","city_ch_name":"沙市","city_en_name":"JIONGSHA/SHASHI","rownum_":80},{"airport_4code":"ZBSH","airport_3code":"SHP","city_ch_name":"秦皇岛","city_en_name":"QINHUANGDAO","rownum_":81},{"airport_4code":"ZGBH","airport_3code":"BHY","city_ch_name":"北海","city_en_name":"BEIHAI","rownum_":82},{"airport_4code":"ZGCD","airport_3code":"CGD","city_ch_name":"常德","city_en_name":"CHANGDE","rownum_":83},{"airport_4code":"ZHES","airport_3code":"ENH","city_ch_name":"恩施","city_en_name":"ENSHI","rownum_":84},{"airport_4code":"ZSWY","airport_3code":"WUS","city_ch_name":"武夷山","city_en_name":"WUYISHAN","rownum_":85},{"airport_4code":"ZSAQ","airport_3code":"AQG","city_ch_name":"安庆","city_en_name":"ANQING","rownum_":86},{"airport_4code":"ZSHC","airport_3code":"HGH","city_ch_name":"杭州","city_en_name":"HANGZHOU","rownum_":87},{"airport_4code":"ZHYC","airport_3code":"YIH","city_ch_name":"宜昌","city_en_name":"YICHANG","rownum_":88},{"airport_4code":"ZGSD","airport_3code":"ZUH","city_ch_name":"珠海","city_en_name":"ZHUHAI","rownum_":89},{"airport_4code":"ZYJL","airport_3code":"JIL","city_ch_name":"吉林","city_en_name":"JILIN","rownum_":90},{"airport_4code":"ZSNB","airport_3code":"NGB","city_ch_name":"宁波","city_en_name":"NINGBO","rownum_":91},{"airport_4code":"ZJSY","airport_3code":"SYX","city_ch_name":"三亚","city_en_name":"SANYA","rownum_":92},{"airport_4code":"ZSJU","airport_3code":"JUZ","city_ch_name":"衢州","city_en_name":"QUZHOU","rownum_":93},{"airport_4code":"ZSFY","airport_3code":"FUG","city_ch_name":"阜阳","city_en_name":"FUYANG","rownum_":94},{"airport_4code":"ZPZT","airport_3code":"ZAT","city_ch_name":"昭通","city_en_name":"ZHAOTONG","rownum_":95},{"airport_4code":"ZYYL","airport_3code":"YLN","city_ch_name":"依兰","city_en_name":"YILAN","rownum_":96},{"airport_4code":"ZUGU","airport_3code":"GYS","city_ch_name":"广元","city_en_name":"GUANGYUAN","rownum_":97},{"airport_4code":"PHNL","airport_3code":"HNL","city_ch_name":"夏威夷","city_en_name":"HAWAII","rownum_":98},{"airport_4code":"PKMJ","airport_3code":"MAJ","city_ch_name":"马朱罗","city_en_name":"MAJURO","rownum_":99},{"airport_4code":"ZSNT","airport_3code":"NTG","city_ch_name":"南通","city_en_name":"NANTONG/XINGDONG","rownum_":100},{"airport_4code":"ZUGH","airport_3code":"GHN","city_ch_name":"广汉","city_en_name":"GUANGHAN","rownum_":101},{"airport_4code":"ZUNC","airport_3code":"NAO","city_ch_name":"南充","city_en_name":"NANCHONG","rownum_":102},{"airport_4code":"ZULS","airport_3code":"LXA","city_ch_name":"拉萨","city_en_name":"LHASA","rownum_":103},{"airport_4code":"ZPSM","airport_3code":"SYM","city_ch_name":"思茅","city_en_name":"SIMAO","rownum_":104},{"airport_4code":"ZYDD","airport_3code":"DDG","city_ch_name":"丹东","city_en_name":"DANDONG","rownum_":105},{"airport_4code":"ZGDY","airport_3code":"DYG","city_ch_name":"张家界","city_en_name":"ZHANGJIAJIE","rownum_":106},{"airport_4code":"ZYTL","airport_3code":"DLC","city_ch_name":"大连","city_en_name":"DALIAN","rownum_":107},{"airport_4code":"ZGKL","airport_3code":"KWL","city_ch_name":"桂林","city_en_name":"GUILIN","rownum_":108},{"airport_4code":"ZBCZ","airport_3code":"CIH","city_ch_name":"长治","city_en_name":"CHANGZHI","rownum_":109},{"airport_4code":"ZUTR","airport_3code":"TEN","city_ch_name":"铜仁","city_en_name":"TONGREN","rownum_":110},{"airport_4code":"ZPMS","airport_3code":"LUM","city_ch_name":"德宏","city_en_name":"DEHONG","rownum_":111},{"airport_4code":"ZSXZ","airport_3code":"XUZ","city_ch_name":"徐州","city_en_name":"XUZHOU","rownum_":112},{"airport_4code":"ZSWZ","airport_3code":"WNZ","city_ch_name":"温州","city_en_name":"WENZHOU","rownum_":113},{"airport_4code":"ZLYL","airport_3code":"UYN","city_ch_name":"榆林","city_en_name":"YULIN/XISHA","rownum_":114},{"airport_4code":"ZSCG","airport_3code":"CZX","city_ch_name":"常州","city_en_name":"CHANGZHOU","rownum_":115},{"airport_4code":"ZUDX","airport_3code":"DAX","city_ch_name":"达县","city_en_name":"DAZHOU","rownum_":116},{"airport_4code":"ZPLJ","airport_3code":"LJG","city_ch_name":"丽江","city_en_name":"LIJIANG","rownum_":117},{"airport_4code":"ZGSZ","airport_3code":"SZX","city_ch_name":"深圳","city_en_name":"SHENZHEN","rownum_":118},{"airport_4code":"RJGG","airport_3code":"NGO","city_ch_name":"名谷屋","city_en_name":"NAGOYA","rownum_":119},{"airport_4code":"VTBD","airport_3code":"DMK","city_ch_name":"曼谷","city_en_name":"BANGKOK","rownum_":120},{"airport_4code":"LFBO","airport_3code":"TLS","city_ch_name":"图卢兹","city_en_name":"TOULOUSE","rownum_":121},{"airport_4code":"WBKK","airport_3code":"BKI","city_ch_name":"哥打基纳巴卢","city_en_name":"KOTA KINABALU","rownum_":122},{"airport_4code":"ZUUU","airport_3code":"CTU","city_ch_name":"成都","city_en_name":"CHENGDU","rownum_":123},{"airport_4code":"ZLIC","airport_3code":"INC","city_ch_name":"银川","city_en_name":"YINCHUAN","rownum_":124},{"airport_4code":"ZYCC","airport_3code":"CGQ","city_ch_name":"长春","city_en_name":"CHANGCHUN","rownum_":125},{"airport_4code":"VVDN","airport_3code":"DAD","city_ch_name":"岘港","city_en_name":"DANANG","rownum_":126},{"airport_4code":"KBFI","airport_3code":"SEA","city_ch_name":"西雅图","city_en_name":"SEATTLE","rownum_":127},{"airport_4code":"PGSN","airport_3code":"SPN","city_ch_name":"马里亚纳群岛","city_en_name":"MARIANA IS","rownum_":128},{"airport_4code":"ZSLQ","airport_3code":"HYN","city_ch_name":"台州","city_en_name":"TAIZHOU","rownum_":129},{"airport_4code":"ZSTX","airport_3code":"TXN","city_ch_name":"黄山","city_en_name":"HUANGSHAN","rownum_":130},{"airport_4code":"RKTU","airport_3code":"CJJ","city_ch_name":"清州","city_en_name":"CHEONGJU","rownum_":131},{"airport_4code":"RKJJ","airport_3code":"KWJ","city_ch_name":"光州","city_en_name":"KWANGIU","rownum_":132},{"airport_4code":"RKPK","airport_3code":"PUS","city_ch_name":"釜山","city_en_name":"BUSAN","rownum_":133},{"airport_4code":"OLBA","airport_3code":"BEY","city_ch_name":"贝鲁特","city_en_name":"RAFIC HARIRI","rownum_":134},{"airport_4code":"ZHCC","airport_3code":"CGO","city_ch_name":"郑州","city_en_name":"ZHENGZHOU","rownum_":135},{"airport_4code":"UTAM","airport_3code":"MYP","city_ch_name":"马雷","city_en_name":"MARY","rownum_":136},{"airport_4code":"VMMC","airport_3code":"MFM","city_ch_name":"澳门","city_en_name":"MACAO","rownum_":137},{"airport_4code":"ZBDS","airport_3code":"DSN","city_ch_name":"鄂尔多斯","city_en_name":"ORDOS","rownum_":138},{"airport_4code":"RJBB","airport_3code":"KIX","city_ch_name":"大阪","city_en_name":"OSAKA","rownum_":139},{"airport_4code":"ZUAS","airport_3code":"AVA","city_ch_name":"安顺","city_en_name":"ANSHUN","rownum_":140},{"airport_4code":"RPLL","airport_3code":"MNL","city_ch_name":"马尼拉","city_en_name":"MANILA","rownum_":141},{"airport_4code":"WIII","airport_3code":"CGK","city_ch_name":"雅加达","city_en_name":"JAKARTA","rownum_":142},{"airport_4code":"WIPP","airport_3code":"PLM","city_ch_name":"巨港","city_en_name":"PALEMBANG","rownum_":143},{"airport_4code":"ZSLY","airport_3code":"LYI","city_ch_name":"临沂","city_en_name":"LINYI","rownum_":144},{"airport_4code":"ZBUH","airport_3code":"WUA","city_ch_name":"乌海","city_en_name":"WUHAI","rownum_":145},{"airport_4code":"ZYBS","airport_3code":"NBS","city_ch_name":"长白山","city_en_name":"CHANGBAISHAN","rownum_":146},{"airport_4code":"RJOA","airport_3code":"HIJ","city_ch_name":"广岛","city_en_name":"HIROSHIMA","rownum_":147},{"airport_4code":"ZBMZ","airport_3code":"NZH","city_ch_name":"满洲里","city_en_name":"MAN ZHOU LI","rownum_":148},{"airport_4code":"RKJB","airport_3code":"MWX","city_ch_name":"新光州","city_en_name":"MUAN INTL","rownum_":149},{"airport_4code":"RJDC","airport_3code":"UBJ","city_ch_name":"山口宇部","city_en_name":"UBE","rownum_":150},{"airport_4code":"RJOT","airport_3code":"TAK","city_ch_name":"花江","city_en_name":"TAKAMATSU","rownum_":151},{"airport_4code":"VGZR","airport_3code":"DAC","city_ch_name":"达卡","city_en_name":"DHAKA","rownum_":152},{"airport_4code":"VGEG","airport_3code":"CGP","city_ch_name":"吉大港","city_en_name":"CHITTAGONG","rownum_":153},{"airport_4code":"VGJR","airport_3code":"JSR","city_ch_name":"杰索尔","city_en_name":"JESSORE","rownum_":154},{"airport_4code":"VGSY","airport_3code":"ZYL","city_ch_name":"索马里","city_en_name":"SYLHET","rownum_":155},{"airport_4code":"RJFF","airport_3code":"FUK","city_ch_name":"福冈","city_en_name":"FUKUOKA","rownum_":156},{"airport_4code":"RPLB","airport_3code":"SFS","city_ch_name":"苏克比湾","city_en_name":"SUBIC BAY","rownum_":157},{"airport_4code":"RPLI","airport_3code":"LAO","city_ch_name":"拉瓦格","city_en_name":"LAOAG","rownum_":158},{"airport_4code":"RPLC","airport_3code":"CRK","city_ch_name":"克拉克","city_en_name":"ANGELES CITY","rownum_":159},{"airport_4code":"VTSP","airport_3code":"HKT","city_ch_name":"普吉","city_en_name":"PHUKET","rownum_":160},{"airport_4code":"WIDD","airport_3code":"BTH","city_ch_name":"巴塔","city_en_name":"BATAM","rownum_":161},{"airport_4code":"WIHH","airport_3code":"HLP","city_ch_name":"夹卡塔","city_en_name":"JAKARTA","rownum_":162},{"airport_4code":"WMSA","airport_3code":"SZB","city_ch_name":"吉隆坡","city_en_name":"KUALA LUMPUR","rownum_":163},{"airport_4code":"ZSGS","airport_3code":"JGS","city_ch_name":"井冈山","city_en_name":"jinggangshan","rownum_":164},{"airport_4code":"WMKJ","airport_3code":"JHB","city_ch_name":"新山","city_en_name":"JOHOR BAHRU","rownum_":165},{"airport_4code":"WMKP","airport_3code":"PEN","city_ch_name":"槟榔屿","city_en_name":"PENANG I","rownum_":166},{"airport_4code":"ZBHD","airport_3code":"HDG","city_ch_name":"邯郸","city_en_name":"HANDAN","rownum_":167},{"airport_4code":"UERR","airport_3code":"MJZ","city_ch_name":"米尔内","city_en_name":"MIRNY","rownum_":168},{"airport_4code":"UEEE","airport_3code":"YKS","city_ch_name":"雅库斯克","city_en_name":"YAKUTSK","rownum_":169},{"airport_4code":"UHHH","airport_3code":"KHV","city_ch_name":"俄罗斯哈巴罗夫斯克","city_en_name":"NOVY","rownum_":170},{"airport_4code":"VTBS","airport_3code":"BKK","city_ch_name":"曼谷","city_en_name":"BANGKOK","rownum_":171},{"airport_4code":"ROAH","airport_3code":"OKA","city_ch_name":"那霸","city_en_name":"NAHA","rownum_":172},{"airport_4code":"OPLA","airport_3code":"LHE","city_ch_name":"拉合尔","city_en_name":"LAHORE","rownum_":173},{"airport_4code":"VYYY","airport_3code":"RGN","city_ch_name":"仰光","city_en_name":"YANGON","rownum_":174},{"airport_4code":"VHHH","airport_3code":"HKG","city_ch_name":"香港","city_en_name":"HONG KONG","rownum_":175},{"airport_4code":"RKPC","airport_3code":"CJU","city_ch_name":"济州","city_en_name":"CHEJU","rownum_":176},{"airport_4code":"ZBTL","airport_3code":"TGO","city_ch_name":"通辽","city_en_name":"TONGLIAO","rownum_":177},{"airport_4code":"ZBXH","airport_3code":"XIL","city_ch_name":"锡林浩特","city_en_name":"XILINHAOTE","rownum_":178},{"airport_4code":"ZBOW","airport_3code":"BAV","city_ch_name":"包头","city_en_name":"BAOTOU","rownum_":179},{"airport_4code":"ZBCF","airport_3code":"CIF","city_ch_name":"赤峰","city_en_name":"CHIFENG","rownum_":180},{"airport_4code":"ZSYW","airport_3code":"YIW","city_ch_name":"义乌","city_en_name":"YIWU","rownum_":181},{"airport_4code":"ZGZJ","airport_3code":"ZHA","city_ch_name":"湛江","city_en_name":"ZHANJIANG","rownum_":182},{"airport_4code":"PANC","airport_3code":"ANC","city_ch_name":"安克雷奇","city_en_name":"ANCHORAGE","rownum_":183},{"airport_4code":"RJAA","airport_3code":"NRT","city_ch_name":"东京成田","city_en_name":"TOKYO","rownum_":184},{"airport_4code":"PBFI","airport_3code":"BFI","city_ch_name":"没资料","city_en_name":"PBFI","rownum_":185},{"airport_4code":"ZWWW","airport_3code":"URC","city_ch_name":"乌鲁木齐","city_en_name":"URUMQI","rownum_":186},{"airport_4code":"ZWYN","airport_3code":"YIN","city_ch_name":"伊宁","city_en_name":"YINING","rownum_":187},{"airport_4code":"RPVM","airport_3code":"CEB","city_ch_name":"拉普拉普","city_en_name":"LAPU-LAPU","rownum_":188},{"airport_4code":"LEMD","airport_3code":"MAD","city_ch_name":"马德里","city_en_name":"MADRID","rownum_":189},{"airport_4code":"UKBB","airport_3code":"KBP","city_ch_name":"基辅","city_en_name":"KIEV","rownum_":190},{"airport_4code":"ZSJN","airport_3code":"TNA","city_ch_name":"济南","city_en_name":"JINAN","rownum_":191},{"airport_4code":"ZSZS","airport_3code":"HSN","city_ch_name":"舟山","city_en_name":"ZHOUSHAN","rownum_":192},{"airport_4code":"ZYTX","airport_3code":"SHE","city_ch_name":"沈阳","city_en_name":"SHENYANG","rownum_":193},{"airport_4code":"ZBLA","airport_3code":"HLD","city_ch_name":"呼伦贝尔","city_en_name":"HULUNBEIER","rownum_":194},{"airport_4code":"ZSNJ","airport_3code":"NKG","city_ch_name":"南京","city_en_name":"NANJING","rownum_":195},{"airport_4code":"VDBG","airport_3code":"BBM","city_ch_name":"马德望","city_en_name":"BATTAMBANG","rownum_":196},{"airport_4code":"ZULB","airport_3code":"LLB","city_ch_name":"荔波","city_en_name":"LIBO","rownum_":197},{"airport_4code":"WBGG","airport_3code":"KCH","city_ch_name":"古晋","city_en_name":"KUCHING","rownum_":198},{"airport_4code":"WAAA","airport_3code":"UPG","city_ch_name":"马坎萨","city_en_name":"MAKASSAR","rownum_":199},{"airport_4code":"VTBU","airport_3code":"UTP","city_ch_name":"罗","city_en_name":"RAYONG","rownum_":200},{"airport_4code":"UHSS","airport_3code":"USS","city_ch_name":"于","city_en_name":"YUZHNO-SAKHALINSK","rownum_":201},{"airport_4code":"RJFR","airport_3code":"KKJ","city_ch_name":"北九洲","city_en_name":"KITAKYUSHU","rownum_":202},{"airport_4code":"ZPWS","airport_3code":"WNH","city_ch_name":"文山","city_en_name":"WENSHAN","rownum_":203},{"airport_4code":"ZLZW","airport_3code":"ZHY","city_ch_name":"中卫","city_en_name":"ZHONG WEI","rownum_":204},{"airport_4code":"RCMQ","airport_3code":"RMQ","city_ch_name":"台中","city_en_name":"Taichung","rownum_":205},{"airport_4code":"VNKT","airport_3code":"KTM","city_ch_name":"加德满都","city_en_name":"","rownum_":206},{"airport_4code":"KLAX","airport_3code":"LAX","city_ch_name":"洛杉矶","city_en_name":"","rownum_":207},{"airport_4code":"EGLL","airport_3code":"LHR","city_ch_name":"伦敦","city_en_name":"","rownum_":208},{"airport_4code":"YMML","airport_3code":"MEL","city_ch_name":"墨尔本","city_en_name":"","rownum_":209},{"airport_4code":"EDDM","airport_3code":"MUC","city_ch_name":"慕尼黑","city_en_name":"","rownum_":210},{"airport_4code":"LIMC","airport_3code":"MXP","city_ch_name":"米兰","city_en_name":"","rownum_":211},{"airport_4code":"KORD","airport_3code":"ORD","city_ch_name":"芝加哥","city_en_name":"","rownum_":212},{"airport_4code":"KSFO","airport_3code":"SFO","city_ch_name":"旧金山","city_en_name":"","rownum_":213},{"airport_4code":"UUEE","airport_3code":"SVO","city_ch_name":"莫斯科","city_en_name":"","rownum_":214},{"airport_4code":"USSS","airport_3code":"SVX","city_ch_name":"叶卡捷林堡","city_en_name":"YEKATERINBURG","rownum_":215},{"airport_4code":"YSSY","airport_3code":"SYD","city_ch_name":"悉尼","city_en_name":"SYDNEY","rownum_":216},{"airport_4code":"LOWW","airport_3code":"VIE","city_ch_name":"维也纳","city_en_name":"WIEN","rownum_":217},{"airport_4code":"ZSYN","airport_3code":"YNZ","city_ch_name":"盐城","city_en_name":"盐","rownum_":218},{"airport_4code":"ZSSH","airport_3code":"HIA","city_ch_name":"淮安","city_en_name":"","rownum_":219},{"airport_4code":"ZWTL","airport_3code":"TLQ","city_ch_name":"吐鲁番","city_en_name":"","rownum_":220},{"airport_4code":"PGUM","airport_3code":"GUM","city_ch_name":"关岛","city_en_name":"GUAM","rownum_":221},{"airport_4code":"VOBL","airport_3code":"BLR","city_ch_name":"班加罗尔","city_en_name":"BANGALORE","rownum_":222},{"airport_4code":"ZBSN","airport_3code":"TVS","city_ch_name":"唐山","city_en_name":"","rownum_":223},{"airport_4code":"ZUZY","airport_3code":"ZYI","city_ch_name":"遵义","city_en_name":"","rownum_":224},{"airport_4code":"ESSA","airport_3code":"ARN","city_ch_name":"斯德哥尔摩","city_en_name":"","rownum_":225},{"airport_4code":"ZUBD","airport_3code":"BPX","city_ch_name":"拉萨","city_en_name":"","rownum_":226},{"airport_4code":"LFPG","airport_3code":"CDG","city_ch_name":"巴黎","city_en_name":"paris","rownum_":227},{"airport_4code":"EKCH","airport_3code":"CPH","city_ch_name":"哥本哈根","city_en_name":"kobenhavn","rownum_":228},{"airport_4code":"LIRF","airport_3code":"FCO","city_ch_name":"罗马","city_en_name":"roma","rownum_":229},{"airport_4code":"RJSF","airport_3code":"FKS","city_ch_name":"福岛","city_en_name":"fukushima","rownum_":230},{"airport_4code":"EDDF","airport_3code":"FRA","city_ch_name":"法兰克福","city_en_name":"frankfurt","rownum_":231},{"airport_4code":"ZUDC","airport_3code":"DCY","city_ch_name":"稻城","city_en_name":"","rownum_":232},{"airport_4code":"CYVR","airport_3code":"YVR","city_ch_name":"温哥华","city_en_name":"VANCOUVER","rownum_":233},{"airport_4code":"ZUNZ","airport_3code":"LZY","city_ch_name":"林芝","city_en_name":"LIN ZHI","rownum_":234},{"airport_4code":"ZMUB","airport_3code":"ULN","city_ch_name":"乌兰巴托","city_en_name":"ULAN BATOR","rownum_":235},{"airport_4code":"ZUZH","airport_3code":"PZI","city_ch_name":"攀枝花","city_en_name":"PAN ZHI HUA","rownum_":236},{"airport_4code":"ZUAL","airport_3code":"NGQ","city_ch_name":"阿里","city_en_name":"A LI","rownum_":237},{"airport_4code":"ZSYA","airport_3code":"YTY","city_ch_name":"扬州","city_en_name":"YANGZHOU","rownum_":238},{"airport_4code":"ZBYZ","airport_3code":"RLK","city_ch_name":"巴彦淖尔","city_en_name":"","rownum_":239},{"airport_4code":"ZURK","airport_3code":"RKZ","city_ch_name":"日喀则","city_en_name":"","rownum_":240},{"airport_4code":"RKNY","airport_3code":"YNY","city_ch_name":"江原道","city_en_name":"JIANGYUANDAO","rownum_":241},{"airport_4code":"ZYJZ","airport_3code":"JNZ","city_ch_name":"锦州","city_en_name":"JINZHOU","rownum_":242},{"airport_4code":"ZGHZ","airport_3code":"HUZ","city_ch_name":"惠州","city_en_name":"HUIZHOU","rownum_":243},{"airport_4code":"ZYAS","airport_3code":"AOG","city_ch_name":"鞍山","city_en_name":"ANSHAN","rownum_":244},{"airport_4code":"ZWKN","airport_3code":"KJI","city_ch_name":"布尔津","city_en_name":"BUERJIN","rownum_":245},{"airport_4code":"ZWTC","airport_3code":"TCG","city_ch_name":"塔城","city_en_name":"TACHENG","rownum_":246},{"airport_4code":"WSSS","airport_3code":"SIN","city_ch_name":"新加坡","city_en_name":"SINGAPORE","rownum_":247},{"airport_4code":"ZSYC","airport_3code":"YIC","city_ch_name":"宜春","city_en_name":"YICHUN","rownum_":248},{"airport_4code":"ZPTC","airport_3code":"TCZ","city_ch_name":"腾冲","city_en_name":"TENGCHONG","rownum_":249},{"airport_4code":"ZSJH","airport_3code":"JUH","city_ch_name":"池州","city_en_name":"CHIZHOU","rownum_":250},{"airport_4code":"VTSG","airport_3code":"KBV","city_ch_name":"甲米","city_en_name":"","rownum_":251},{"airport_4code":"ZSJG","airport_3code":"JNG","city_ch_name":"济宁","city_en_name":"JINING","rownum_":252},{"airport_4code":"ZUKD","airport_3code":"KGT","city_ch_name":"康定","city_en_name":"KANGDING","rownum_":253},{"airport_4code":"ZGLG","airport_3code":"LLF","city_ch_name":"永州","city_en_name":"YONGZHOU","rownum_":254},{"airport_4code":"ZSSS","airport_3code":"SHA","city_ch_name":"虹桥","city_en_name":"SHANGHAI","rownum_":255},{"airport_4code":"VVNB","airport_3code":"HAN","city_ch_name":"河内","city_en_name":"HANOI","rownum_":256},{"airport_4code":"UACC","airport_3code":"TSE","city_ch_name":"阿斯塔纳","city_en_name":"","rownum_":257},{"airport_4code":"ZGFS","airport_3code":"FUO","city_ch_name":"佛山","city_en_name":"","rownum_":258},{"airport_4code":"ZGCJ","airport_3code":"HJJ","city_ch_name":"怀化","city_en_name":"HUAIHUA","rownum_":259},{"airport_4code":"ZSBB","airport_3code":"BFU","city_ch_name":"蚌埠","city_en_name":"","rownum_":260},{"airport_4code":"ZUNP","airport_3code":"HZH","city_ch_name":"黎平","city_en_name":"LIPING","rownum_":261},{"airport_4code":"ZYTN","airport_3code":"TNH","city_ch_name":"通化","city_en_name":"TONGHUA","rownum_":262},{"airport_4code":"ZUGY","airport_3code":"KWE","city_ch_name":"贵阳","city_en_name":"GUIYANG","rownum_":263},{"airport_4code":"ZGWZ","airport_3code":"WUZ","city_ch_name":"梧州","city_en_name":"WUZHOU","rownum_":264},{"airport_4code":"ZSQZ","airport_3code":"JJN","city_ch_name":"泉州","city_en_name":"QUANZHOU","rownum_":265},{"airport_4code":"ZLQY","airport_3code":"IQN","city_ch_name":"庆阳","city_en_name":"QINGYANG/XIFENGZHE","rownum_":266},{"airport_4code":"ZPBS","airport_3code":"BSD","city_ch_name":"保山","city_en_name":"BAOSHAN","rownum_":267},{"airport_4code":"ZLGM","airport_3code":"GOQ","city_ch_name":"格尔木","city_en_name":"GEERMU","rownum_":268},{"airport_4code":"ZLHZ","airport_3code":"HZG","city_ch_name":"汉中","city_en_name":"HANZHONG","rownum_":269},{"airport_4code":"ZBHH","airport_3code":"HET","city_ch_name":"呼和浩特","city_en_name":"HOHHOT","rownum_":270},{"airport_4code":"ZGZH","airport_3code":"LZH","city_ch_name":"柳州","city_en_name":"LIUZHOU","rownum_":271},{"airport_4code":"ZSQD","airport_3code":"TAO","city_ch_name":"青岛","city_en_name":"QINGDAO","rownum_":272},{"airport_4code":"WSAP","airport_3code":"QPG","city_ch_name":"新加坡巴耶利巴","city_en_name":"PAYA LEBAR","rownum_":273},{"airport_4code":"NULL","airport_3code":"NUL","city_ch_name":"取消","city_en_name":"QUXIAO1","rownum_":274},{"airport_4code":"ZSOF","airport_3code":"HFE","city_ch_name":"合肥","city_en_name":"HEFEI","rownum_":275},{"airport_4code":"ZSWH","airport_3code":"WEH","city_ch_name":"威海","city_en_name":"WEIHAI","rownum_":276},{"airport_4code":"ZUXC","airport_3code":"XIC","city_ch_name":"西昌","city_en_name":"XICHANG/QISHAN","rownum_":277},{"airport_4code":"ZYMD","airport_3code":"MDG","city_ch_name":"牡丹江","city_en_name":"MUDANJIANG","rownum_":278},{"airport_4code":"ZYYJ","airport_3code":"YNJ","city_ch_name":"延吉","city_en_name":"YANJI","rownum_":279},{"airport_4code":"ZWFY","airport_3code":"FYN","city_ch_name":"富蕴","city_en_name":"FUYUN/KEKETOTOHAI","rownum_":280},{"airport_4code":"ZHNY","airport_3code":"NNY","city_ch_name":"南阳","city_en_name":"NANYANG","rownum_":281},{"airport_4code":"ZSLO","airport_3code":"LCX","city_ch_name":"连城","city_en_name":"LIANCHENG","rownum_":282},{"airport_4code":"ZBYC","airport_3code":"YCU","city_ch_name":"运城","city_en_name":"YUNCHENG","rownum_":283},{"airport_4code":"ZWSH","airport_3code":"KHG","city_ch_name":"喀什","city_en_name":"KASHI","rownum_":284},{"airport_4code":"RKSI","airport_3code":"ICN","city_ch_name":"首尔","city_en_name":"INCHEON","rownum_":285},{"airport_4code":"EDHI","airport_3code":"XFW","city_ch_name":"汉堡","city_en_name":"HAMBURG","rownum_":286},{"airport_4code":"UNNT","airport_3code":"OVB","city_ch_name":"新西伯利亚","city_en_name":"NOVOSIBIRSK","rownum_":287},{"airport_4code":"RKTN","airport_3code":"TAE","city_ch_name":"大邱","city_en_name":"DAEGU","rownum_":288},{"airport_4code":"HSOB","airport_3code":"EBD","city_ch_name":"欧拜伊德","city_en_name":"EL OBEID","rownum_":289},{"airport_4code":"UAAA","airport_3code":"ALA","city_ch_name":"阿拉","city_en_name":"ALMATY","rownum_":290},{"airport_4code":"UTTT","airport_3code":"TAS","city_ch_name":"塔什干","city_en_name":"Tashkent","rownum_":291},{"airport_4code":"OIII","airport_3code":"THR","city_ch_name":"德黑兰","city_en_name":"TEHRAN","rownum_":292},{"airport_4code":"UTAA","airport_3code":"ASB","city_ch_name":"阿什哈巴德","city_en_name":"ASHGABAT","rownum_":293},{"airport_4code":"OIHH","airport_3code":"HDM","city_ch_name":"哈马丹","city_en_name":"HAMADAN","rownum_":294},{"airport_4code":"OKBK","airport_3code":"KWI","city_ch_name":"科威特","city_en_name":"KUWAIT","rownum_":295},{"airport_4code":"OEMA","airport_3code":"MED","city_ch_name":"麦地那","city_en_name":"ABDULAZIZ","rownum_":296},{"airport_4code":"OEJN","airport_3code":"JED","city_ch_name":"吉达","city_en_name":"ABDULAZIZ INTL","rownum_":297},{"airport_4code":"HSSS","airport_3code":"KRT","city_ch_name":"喀土穆","city_en_name":"KHARTOUM","rownum_":298},{"airport_4code":"RJEC","airport_3code":"AKJ","city_ch_name":"旭川","city_en_name":"","rownum_":299},{"airport_4code":"RJCB","airport_3code":"OBO","city_ch_name":"带广","city_en_name":"","rownum_":300},{"airport_4code":"VIDP","airport_3code":"DEL","city_ch_name":"新德里","city_en_name":"DELHI","rownum_":301},{"airport_4code":"VILK","airport_3code":"LKO","city_ch_name":"勒克瑙","city_en_name":"LUCKNOW","rownum_":302},{"airport_4code":"OMAL","airport_3code":"AAN","city_ch_name":"艾因","city_en_name":"AL AIN","rownum_":303},{"airport_4code":"OMDB","airport_3code":"DXB","city_ch_name":"迪拜","city_en_name":"DUBAI","rownum_":304},{"airport_4code":"OISS","airport_3code":"SYZ","city_ch_name":"设拉子","city_en_name":"SHIRAZ","rownum_":305},{"airport_4code":"OIMT","airport_3code":"TCX","city_ch_name":"塔巴斯","city_en_name":"TABAS","rownum_":306},{"airport_4code":"OIYY","airport_3code":"AZD","city_ch_name":"亚兹德","city_en_name":"YAZD","rownum_":307},{"airport_4code":"OIKK","airport_3code":"KER","city_ch_name":"克尔曼","city_en_name":"KERMAN","rownum_":308},{"airport_4code":"OIKB","airport_3code":"BND","city_ch_name":"阿巴斯港","city_en_name":"BANDAR ABBAS","rownum_":309},{"airport_4code":"OERK","airport_3code":"RUH","city_ch_name":"利雅得","city_en_name":"RIYADH","rownum_":310},{"airport_4code":"OOMS","airport_3code":"MCT","city_ch_name":"马斯喀特","city_en_name":"MUSCAT","rownum_":311},{"airport_4code":"OTBD","airport_3code":"DOH","city_ch_name":"多哈","city_en_name":"DOHA","rownum_":312},{"airport_4code":"HSNN","airport_3code":"UYL","city_ch_name":"尼亚拉","city_en_name":"NYALA","rownum_":313},{"airport_4code":"OEDF","airport_3code":"DMM","city_ch_name":"达曼","city_en_name":"DAMMAM","rownum_":314},{"airport_4code":"FKKD","airport_3code":"DLA","city_ch_name":"杜阿拉","city_en_name":"DOUALA","rownum_":315},{"airport_4code":"FEFF","airport_3code":"BGF","city_ch_name":"班吉","city_en_name":"MPOKO","rownum_":316},{"airport_4code":"ZYMH","airport_3code":"OHE","city_ch_name":"漠河","city_en_name":"mohe","rownum_":317},{"airport_4code":"HBBA","airport_3code":"BJM","city_ch_name":"布琼布拉","city_en_name":"BUJUMBURA","rownum_":318},{"airport_4code":"ZSDY","airport_3code":"DOY","city_ch_name":"东营","city_en_name":"DONGYING","rownum_":319},{"airport_4code":"ZUWX","airport_3code":"WXN","city_ch_name":"万州","city_en_name":"WANZHOU","rownum_":320},{"airport_4code":"ZUYI","airport_3code":"ACX","city_ch_name":"兴义","city_en_name":"XINGYI","rownum_":321},{"airport_4code":"RJAH","airport_3code":"IBR","city_ch_name":"茨城","city_en_name":"TSUCHIURA","rownum_":322},{"airport_4code":"RJCK","airport_3code":"KUH","city_ch_name":"钏路","city_en_name":"KUSHIRO","rownum_":323},{"airport_4code":"VTSB","airport_3code":"URT","city_ch_name":"素叻他尼","city_en_name":"SURAT THANI","rownum_":324},{"airport_4code":"UAII","airport_3code":"CIT","city_ch_name":"史马肯特","city_en_name":"SHYMKENT","rownum_":325},{"airport_4code":"OIFM","airport_3code":"IFN","city_ch_name":"伊斯法罕沙希德贝赫什","city_en_name":"SHAHID BEHESHTI","rownum_":326},{"airport_4code":"OIMM","airport_3code":"MHD","city_ch_name":"马什哈德","city_en_name":"NEJAD INTL","rownum_":327},{"airport_4code":"HSFS","airport_3code":"ELF","city_ch_name":"法舍尔","city_en_name":"EL FASHIR","rownum_":328},{"airport_4code":"VDPP","airport_3code":"PNH","city_ch_name":"金边","city_en_name":"PHNOM-PENH","rownum_":329},{"airport_4code":"WBGR","airport_3code":"MYY","city_ch_name":"米里","city_en_name":"MIRI","rownum_":330},{"airport_4code":"HRYR","airport_3code":"KGL","city_ch_name":"基加利","city_en_name":"","rownum_":331},{"airport_4code":"OYAA","airport_3code":"ADE","city_ch_name":"也门","city_en_name":"","rownum_":332},{"airport_4code":"HUEN","airport_3code":"EBB","city_ch_name":"乌干达","city_en_name":"","rownum_":333},{"airport_4code":"FZIC","airport_3code":"FKI","city_ch_name":"基桑加尼","city_en_name":"","rownum_":334},{"airport_4code":"HTMW","airport_3code":"MWZ","city_ch_name":"姆万扎","city_en_name":"","rownum_":335},{"airport_4code":"HAAB","airport_3code":"ADD","city_ch_name":"亚的斯亚贝巴","city_en_name":"","rownum_":336},{"airport_4code":"ZULZ","airport_3code":"LZO","city_ch_name":"泸州","city_en_name":"LUZHOU","rownum_":337},{"airport_4code":"WARR","airport_3code":"SUB","city_ch_name":"苏拉巴亚","city_en_name":"Surabaya","rownum_":338},{"airport_4code":"WALL","airport_3code":"BPN","city_ch_name":"巴里克帕潘","city_en_name":"Balikpapan","rownum_":339},{"airport_4code":"WAOO","airport_3code":"BDJ","city_ch_name":"班加马思","city_en_name":"BANJARMASIN","rownum_":340},{"airport_4code":"SBSJ","airport_3code":"SJK","city_ch_name":"圣若泽","city_en_name":"SAO","rownum_":341},{"airport_4code":"SBRF","airport_3code":"REC","city_ch_name":"累西腓","city_en_name":"GUARARAPES","rownum_":342},{"airport_4code":"GCLP","airport_3code":"LPA","city_ch_name":"大加那利","city_en_name":"GRAN CANRIA","rownum_":343},{"airport_4code":"HECA","airport_3code":"CAI","city_ch_name":"开罗","city_en_name":"CAIRO","rownum_":344},{"airport_4code":"WBSB","airport_3code":"BWN","city_ch_name":"文","city_en_name":"","rownum_":345},{"airport_4code":"RCBS","airport_3code":"KNH","city_ch_name":"金门","city_en_name":"KINMEN","rownum_":346},{"airport_4code":"RCKU","airport_3code":"CYI","city_ch_name":"嘉义","city_en_name":"CHIA YI","rownum_":347},{"airport_4code":"RCKW","airport_3code":"HCN","city_ch_name":"恒春","city_en_name":"HENGCHUN","rownum_":348},{"airport_4code":"ZYJX","airport_3code":"JXA","city_ch_name":"鸡西","city_en_name":"JIXI","rownum_":349},{"airport_4code":"ZYLD","airport_3code":"LDS","city_ch_name":"伊春","city_en_name":"YICHUN","rownum_":350},{"airport_4code":"ZYDQ","airport_3code":"DQA","city_ch_name":"大庆","city_en_name":"DA QING","rownum_":351},{"airport_4code":"ZUTC","airport_3code":"TC ","city_ch_name":"腾冲","city_en_name":"TENGCHONG","rownum_":352},{"airport_4code":"ZWHM","airport_3code":"HMI","city_ch_name":"哈密","city_en_name":"HAMI","rownum_":353},{"airport_4code":"OOSA","airport_3code":"SLL","city_ch_name":"塞拉莱","city_en_name":"SALALAH","rownum_":354},{"airport_4code":"OESH","airport_3code":"SHW","city_ch_name":"沙鲁拉赫","city_en_name":"SHARURAH","rownum_":355},{"airport_4code":"SBGR","airport_3code":"GRU","city_ch_name":"圣保罗","city_en_name":"","rownum_":356},{"airport_4code":"UIAA","airport_3code":"HTA","city_ch_name":"赤塔","city_en_name":"","rownum_":357},{"airport_4code":"KJFK","airport_3code":"JFK","city_ch_name":"纽约","city_en_name":"","rownum_":358},{"airport_4code":"RKSS","airport_3code":"GMP","city_ch_name":"首尔","city_en_name":"SEOUL","rownum_":359},{"airport_4code":"WADD","airport_3code":"DPS","city_ch_name":"巴厘岛","city_en_name":"bali","rownum_":360},{"airport_4code":"FOOL","airport_3code":"LBV","city_ch_name":"利伯维尔","city_en_name":"LIBREVILLE","rownum_":361},{"airport_4code":"FOON","airport_3code":"MVB","city_ch_name":"弗朗斯维尔","city_en_name":"MVENGUE","rownum_":362},{"airport_4code":"HLLT","airport_3code":"TIP","city_ch_name":"的黎波里","city_en_name":"","rownum_":363},{"airport_4code":"RCNN","airport_3code":"TNN","city_ch_name":"台南","city_en_name":"TAINAN","rownum_":364},{"airport_4code":"UNKL","airport_3code":"KJA","city_ch_name":"克拉斯诺亚尔斯克","city_en_name":"KRASNOYARSK","rownum_":365},{"airport_4code":"RCKH","airport_3code":"KHH","city_ch_name":"高雄","city_en_name":"KAOHSIUNG","rownum_":366},{"airport_4code":"RJOB","airport_3code":"OKJ","city_ch_name":"冈山","city_en_name":"OKAYAMA","rownum_":367},{"airport_4code":"RJNS","airport_3code":"FSZ","city_ch_name":"静冈","city_en_name":"SHIZUOKA","rownum_":368},{"airport_4code":"OIBB","airport_3code":"BUZ","city_ch_name":"布什尔","city_en_name":"BUSHEHR","rownum_":369},{"airport_4code":"RPMR","airport_3code":"GES","city_ch_name":"桑托斯","city_en_name":"SANTOS","rownum_":370},{"airport_4code":"WICC","airport_3code":"BDO","city_ch_name":"万隆","city_en_name":"BANDUNG","rownum_":371},{"airport_4code":"VECC","airport_3code":"CCU","city_ch_name":"加尔各答","city_en_name":"KOLKATA","rownum_":372},{"airport_4code":"ZKPY","airport_3code":"FNJ","city_ch_name":"平壤","city_en_name":"PYONGYANG","rownum_":373},{"airport_4code":"OPRN","airport_3code":"ISB","city_ch_name":"伊斯兰堡","city_en_name":"ISLAMABAO","rownum_":374},{"airport_4code":"OPKC","airport_3code":"KHI","city_ch_name":"卡拉奇","city_en_name":"H24","rownum_":375},{"airport_4code":"VLLB","airport_3code":"LPQ","city_ch_name":"琅勃拉邦","city_en_name":"H24","rownum_":376},{"airport_4code":"VDSR","airport_3code":"REP","city_ch_name":"西埃姆","city_en_name":"SIEMREAP","rownum_":377},{"airport_4code":"VLVT","airport_3code":"VTE","city_ch_name":"万象","city_en_name":"VIENTIANE","rownum_":378},{"airport_4code":"VDSV","airport_3code":"VDS","city_ch_name":"西哈努克","city_en_name":"SIHANOUK","rownum_":379}];
+			getDta(dataList);
+		};
+		init();
+		
+		/**
+		 *进入搜索页面加载历史搜索记录  
+		 */
+		function getSearchRecord() {
+			var searchRecord = appcan.locStorage.getVal('searchRecord');
+			if (searchRecord) {
+				var template = "";
+				var searchObjList = JSON.parse(searchRecord);
+				for (var i = 0; i < searchObjList.length; i++) {
+					var cityObj = JSON.parse(searchObjList[i]);
+					template += '<li code4="' + cityObj.code4 + '" onclick="historyLocation(this)">' + cityObj.city + '</li>';
+				};
+				$(".history").find("ul").html(template);
+			}
+		}
+		
+	
+		
+		
+		
+		/**
+		 *拼接城市列表数据 
+		 */
+		function getDta(dataList) {
+			var arr2 = Array();
+			var tmpl2 = '';
+			var A = B = C = D = E = F = G = H = I = J = K = L = N = M = O = P = Q = R = S = T = U = V = W = X = Y = Z = '';
+			for (var i = 0; i < dataList.length; i++) {
+				var pinyin = pinyinUtil.getFirstLetter(dataList[i].city_ch_name.substring(0, 1)).toUpperCase()
+				if (arr2.indexOf(pinyin) < 0) {
+					arr2.push(pinyin);
+					switch (pinyin) {
+						case 'A':
+							A += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'B':
+							B += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'C':
+							C += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'D':
+							D += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'E':
+							E += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'F':
+							F += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'G':
+							G += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'H':
+							H += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'I':
+							I += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'J':
+							J += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'K':
+							K += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'L':
+							L += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'N':
+							N += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'M':
+							M += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'O':
+							P += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'P':
+							P += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'Q':
+							Q += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'R':
+							R += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'S':
+							S += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'T':
+							T += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'U':
+							U += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'V':
+							V += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'W':
+							W += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'X':
+							X += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'Y':
+							Y += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+						case 'Z':
+							Z += '<div id="list_' + pinyin + '" class="ub list_title">' + pinyin + '</div>';
+							break;
+					}
+				}
+				switch (pinyin) {
+					case 'A':
+						A += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + ' >' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'B':
+						B += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'C':
+						C += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'D':
+						D += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'E':
+						E += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'F':
+						F += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'G':
+						G += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'H':
+						H += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'I':
+						I += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'J':
+						J += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'K':
+						K += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'L':
+						L += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'N':
+						N += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'M':
+						M += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'O':
+						P += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'P':
+						P += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'Q':
+						Q += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'R':
+						R += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'S':
+						S += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'T':
+						T += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'U':
+						U += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'V':
+						V += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'W':
+						W += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'X':
+						X += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'Y':
+						Y += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+					case 'Z':
+						Z += '<div class="ub list_item" onclick="getCityData(this)" code3=' + dataList[i].airport_3code + ' code4=' + dataList[i].airport_4code + '>' + dataList[i].city_ch_name + '</div>';
+						break;
+				}
+			}
+			$('#datalist').append(A + B + C + D + E + F + G + H + I + J + K + L + N + M + O + P + Q + R + S + T + U + V + W + X + Y + Z);
+			arr2.sort();
+			tmpl2 = '<div class="ub ub-pc ulev-1" onclick="scrollLocation(\'history\');">历史</div>'
+			for (var i = 0; i < arr2.length; i++) {
+				tmpl2 += '<div class="ub ub-pc ulev-1 " onclick="scrollLocation(\'' + arr2[i] + '\')">' + arr2[i] + '</div>'
+			}
+			$('#sort').html(tmpl2);
+			$('#sort').css('top', ($(window).height() + $('#search').offset().height - $('#sort').height()) / 2)
+		};
+	
+	    /**
+		 *搜索定位    
+		 */
+		function scrollLocation(location, code) {
+			if (location == 'history') {
+				$('body').scrollTop($("#history").offset().top)
+			} else {
+				$('body').scrollTop($("#list_" + location).offset().top)
+			}
+		};
+		
+		/**
+		 *搜索跳转至指定位置，并将搜索的记录放入缓存中
+		 */
+		function checkKey(e) {
+			var search = $('#search_inpt').val().toUpperCase(); //获取用户在输入框输入的搜索值
+			if (search != "") {
+				var item = $('.list_item');
+				for (var i = 0; i < item.length; i++) {
+					if ($(item).eq(i).html() == search || $(item).eq(i).attr('code3') == search || $(item).eq(i).attr('code4') == search) {
+						$('#search_inpt').blur();
+						setTimeout(function() {
+							$('body').scrollTop($(item).eq(i).offset().top)
+						}, 500)
+						break;
+					}
+					if (i == item.length - 1) {
+						alert("提示", "没有搜索到相关信息!")
+					}
+				}
+			}
+		}
+	</script>
+</html>
